@@ -7,3 +7,7 @@ DATE : 30-01-2026
 	
 	I tried to print hello world in minicom via ttl.
 	i tried to display time and date in LCD via UART protocol.
+
+DATE : 31-01-2026
+
+	I learned how the OLED works, and I successfully displayed the content sent via Minicom on the OLED display.
