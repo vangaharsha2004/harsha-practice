@@ -11,3 +11,8 @@ DATE : 30-01-2026
 DATE : 31-01-2026
 
 	I learned how the OLED works, and I successfully displayed the content sent via Minicom on the OLED display.
+
+DATE : 03-02-2026
+
+	I successfully displayed the date, time, temperature, humidity, and air quality in Minicom.
+	I then tried to display the date, time, temperature, humidity, and air quality on an OLED display, but there are some bugs in the code.
