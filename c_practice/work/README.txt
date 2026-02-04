@@ -16,3 +16,9 @@ DATE : 03-02-2026
 
 	I successfully displayed the date, time, temperature, humidity, and air quality in Minicom.
 	I then tried to display the date, time, temperature, humidity, and air quality on an OLED display, but there are some bugs in the code.
+
+DATE : 04-02-2026
+
+	I completed today task, communication between two boards using spi protocol.
+	I succesuffully displayed the data, time, temperture, humidity and air quality in minicom via using two boards.
+		
