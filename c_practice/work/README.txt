@@ -21,4 +21,7 @@ DATE : 04-02-2026
 
 	I completed today task, communication between two boards using spi protocol.
 	I succesuffully displayed the data, time, temperture, humidity and air quality in minicom via using two boards.
-		
+
+DATE : 05-02-2026
+
+	I learn baremetel coding and done basic gpio's like led blinking, button, e.t.c.		
