@@ -24,4 +24,9 @@ DATE : 04-02-2026
 
 DATE : 05-02-2026
 
-	I learn baremetel coding and done basic gpio's like led blinking, button, e.t.c.		
+	I learn baremetel coding and done basic gpio's like led blinking, button, e.t.c.
+
+DATE : 06-02-2026
+
+	morninig, I recap C language.
+	Afternoon, I worked on GPIO's in qcc744m microcontroller.		
