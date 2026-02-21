@@ -2,77 +2,82 @@
 #include<stdlib.h>
 
 struct node{
+    struct node *prev;
     int data;
-    struct node *link;
+    struct node *next;
 };
 
 struct node *head = NULL;
-struct node *temp = NULL;
 struct node *tail = NULL;
-
-//creating a node
+struct node *temp = NULL;
 
 void creating_node(int value){
-
+    
     temp = (struct node *)malloc(sizeof(struct node));
+    temp->prev = NULL;
     temp->data = value;
-    temp->link = NULL;
-
+    temp->next = NULL;
+    
     if(head == NULL){
         head = tail = temp;
     }
     else{
-        tail->link = temp;
+        tail->next = temp;
+        temp->prev = tail;
         tail = temp;
     }
 }
 
-//insert at insert_begin
-
 void insert_begin(int value){
+    
     temp = (struct node *)malloc(sizeof(struct node));
+    temp->prev = NULL;
     temp->data = value;
-    temp->link = NULL;
+    temp->next = NULL;
+    
     if(head == NULL){
-        head = tail =temp;
+        head = tail = temp;
     }
     else{
-        temp->link = head;
+        temp->next = head;
+        head->prev = temp;
         head = temp;
     }
 }
 
-//insert at insert_end
-
 void insert_end(int value){
+    
     temp = (struct node *)malloc(sizeof(struct node));
+    temp->prev = NULL;
     temp->data = value;
-    temp -> link = NULL;
+    temp->next = NULL;
+    
     if(head == NULL){
         head = tail = temp;
     }
     else{
-        tail->link = temp;
+        tail->next = temp;
+        temp->prev = tail;
         tail = temp;
     }
 }
 
-//insert at position
-
 void insert_pos(int value,int pos){
+    
     struct node *temp2 = NULL;
     temp2 = (struct node *)malloc(sizeof(struct node));
+    temp2->prev = NULL;
     temp2->data = value;
-    temp2->link = NULL;
+    temp2->next = NULL;
     
-    if(pos == 1){
+    if(pos ==1){
         insert_begin(value);
         return;
     }
     
     temp = head;
     for(int i=1;i<pos-1 && temp!=NULL;i++){
-        temp = temp->link;
+        temp = temp->next;
     }
     
     if(temp == NULL){
@@ -81,66 +86,57 @@ void insert_pos(int value,int pos){
         return;
     }
     
-    temp2->link = temp->link;
-    temp->link = temp2;
-}
+    temp2->next = temp->next;
+    temp2->prev = temp;
 
-//printing the nodes
-
-void print(){
-    temp = head;
-    while(temp!=NULL){
-        printf("->%d",temp->data);
-        temp = temp->link;
+    if(temp->next != NULL){
+        temp->next->prev = temp2;
+    } 
+    else {
+        tail = temp2;   
     }
-    printf("\n");
-}
 
-//delete at begin
+    temp->next = temp2;
+    
+}
 
 void delete_begin(){
-    if(head == NULL){
-        printf("list is empety!\n");
-        return;
-    }
-    struct node *ptr = head;
-    head = head->link;
-    free(ptr);
     
     if(head == NULL){
-        tail = NULL;
+        printf("list is empety\n");
+        return;
     }
+    
+    struct node *ptr = head;
+    if(head == NULL){
+        head = tail = NULL;
+    }
+    else{
+        head = head->next;
+        head->prev = NULL;
+    }
+    free(ptr);
 }
-
-//deleter at end
 
 void delete_end(){
-    if(head == NULL){
-        printf("list is empety!\n");
-        return;
-    }
-    if(head->link == NULL){
-        free(head);
-        head = tail = NULL;
-        return;
-    }
-    struct node *ptr = head;
-    while(ptr->link->link!=NULL){
-        ptr = ptr->link;
-    }
-    free(ptr->link);
-    ptr->link = NULL;
-    tail = ptr;
-}
-
-//delete at position
-
-void delete_pos(int pos){
     
     if(head == NULL){
         printf("list is empety!\n");
         return;
     }
+    struct node *ptr = tail;
+    if(head == NULL){
+        head = tail = NULL;
+    }
+    else{
+        tail = tail->prev;
+        tail->next = NULL;
+    }
+    free(ptr);
+    
+}
+
+void delete_pos(int pos){
     
     if(pos == 1){
         delete_begin();
@@ -151,7 +147,7 @@ void delete_pos(int pos){
     struct node *ptr2 = NULL;
     for(int i=1;i<pos && ptr1!=NULL;i++){
         ptr2 = ptr1;
-        ptr1 = ptr1->link;
+        ptr1 = ptr1->next;
     }
     
     if(ptr1 == NULL){
@@ -159,51 +155,49 @@ void delete_pos(int pos){
         return;
     }
     
-    ptr2->link = ptr1->link;
-    
     if(ptr1 == tail){
+        ptr2->next = NULL;
         tail = ptr2;
     }
+    else{
+        ptr2->next = ptr1->next;
+        ptr1->next->prev = ptr2;
+    }
     free(ptr1);
-    
+    ptr1 = NULL;
 }
 
-//reverse
+void print(){
+    temp = head;
+    while(temp!=NULL){
+        printf("->%d",temp->data);
+        temp = temp->next;
+    }
+    printf("\n");
+}
+
 
 void reverse(){
-    struct node *ptr1=NULL;
-    struct node *ptr2=NULL;
-    tail = head;
-    
-    while(head!=NULL){
-        ptr2 = head->link;
-        head->link = ptr1;
-        ptr1 = head;
-        head = ptr2;
-    }
-    head = ptr1;
-}
-
-void delete_all(){
     if(head == NULL){
         printf("list is empety!\n");
         return;
     }
     
-    while(head!=NULL){
-        temp = head;
-        head = head->link;
-        free(temp);
-        temp = NULL;
-    }
+    struct node *ptr1 = head;
+    struct node *ptr2 = ptr1->next;
     
-    if(head == NULL){
-        tail = NULL;
-        printf("all nodes are deleted!\n");
+    tail = head;
+    
+    ptr1->next = ptr1->prev;
+    ptr1->prev = ptr2;
+    while(ptr2!=NULL){
+        ptr2->prev = ptr2->next;
+        ptr2->next = ptr1;
+        ptr1 = ptr2;
+        ptr2 = ptr2->prev;
     }
+    head = ptr1;
 }
-
-//main function
 
 int main(){
     int value;
