@@ -1,0 +1,40 @@
+pwd - print working directory
+
+GUI - graphical user interface
+
+CLI - command lined interface
+
+cd - change directory
+
+
+kernal 
+
+	memory managment
+	
+	process managment
+
+	device drivers 
+	
+	resources allocation
+
+	job scheduling
+
+
+shell is scripting language 
+
+scripting languare is interpreted
+
+eg like python
+
+creating file in .sh files
+
+#! --> shibang for system understanding
+
+#!//usr/bin/bash
+
+in this two types of variables
+
+1. system variables ex : cat,pwd,e.t.c
+2. user defined variables ex : x = 10
+
+

@@ -163,6 +163,7 @@ void delete_pos(int pos){
     
     if(ptr1 == tail){
         tail = ptr2;
+	tail->link = NULL;
     }
     free(ptr1);
     
