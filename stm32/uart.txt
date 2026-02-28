@@ -1,0 +1,104 @@
+#include "stm32f4xx.h"
+
+uint16_t adc_read(void);
+void uart2_init(void);
+void uart2_transmit(char c);
+void uart2_print(char *str);
+void uart2_print_number(int num);
+
+/* ---------------- UART INIT ---------------- */
+void uart2_init(void)
+{
+    RCC->AHB1ENR |= 0x01;      // GPIOA clock
+    RCC->APB1ENR |= 0x020000; // USART2 clock
+
+    // PA2, PA3 -> Alternate Function
+    GPIOA->MODER &= ~0x00F0;
+    GPIOA->MODER |=  0x00A0;
+
+    // AF7 for USART2
+    GPIOA->AFR[0] &= ~0x0000FF00;
+    GPIOA->AFR[0] |=  0x00007700;
+
+    USART2->BRR = 0x683;      // 9600 baud @16MHz
+    USART2->CR1 |= 0x0C;      // TE + RE
+    USART2->CR1 |= 0x2000;    // UE
+}
+
+/* ---------------- UART TX ---------------- */
+void uart2_transmit(char c)
+{
+    while(!(USART2->SR & 0x80));
+    USART2->DR = c;
+}
+
+void uart2_print(char *str)
+{
+    while(*str)
+        uart2_transmit(*str++);
+}
+
+/* Print integer number */
+void uart2_print_number(int num)
+{
+    char buf[10];
+    int i = 0;
+
+    if(num == 0)
+    {
+        uart2_transmit('0');
+        return;
+    }
+
+    while(num > 0)
+    {
+        buf[i++] = (num % 10) + '0';
+        num /= 10;
+    }
+
+    while(i--)
+        uart2_transmit(buf[i]);
+}
+
+/* ---------------- ADC READ ---------------- */
+uint16_t adc_read(void)
+{
+    ADC1->CR2 |= 0x40000000;        // Start conversion
+    while(!(ADC1->SR & 0x02));     // Wait EOC
+    return ADC1->DR;
+}
+
+/* ---------------- MAIN ---------------- */
+int main(void)
+{
+    uint16_t adc_value;
+    float voltage;
+    int temperature;
+
+    /* PA0 ADC setup */
+    RCC->AHB1ENR |= 0x01;
+    GPIOA->MODER |= 0x03;           // PA0 analog
+    GPIOA->PUPDR &= ~0x03;
+
+    RCC->APB2ENR |= 0x100;          // ADC1 clock
+    ADC->CCR &= ~0x30000;
+    ADC1->SMPR2 |= 0x07;            // long sampling
+    ADC1->SQR3 = 0x00;              // channel 0
+    ADC1->CR2 |= 0x01;              // ADC ON
+
+    uart2_init();
+
+    while(1)
+    {
+        adc_value = adc_read();
+
+        voltage = (adc_value * 3.3) / 4095.0;
+        temperature = voltage * 100;   // LM35 formula
+
+        uart2_print("Temperature: ");
+        uart2_print_number(temperature);
+        uart2_print(" C\r\n");
+
+        for(volatile int i=0;i<1000000;i++); // delay
+    }
+}
